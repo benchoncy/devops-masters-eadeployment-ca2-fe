@@ -5,7 +5,8 @@
   "author": "Karen Nolan <karen.nolan@it-tallaght.ie>",
   "main": "fe-server.js",
   "scripts": {
-    "start": "node fe-server.js"
+    "start": "node fe-server.js",
+    "test": "NODE_ENV=test mocha '/**/*.spec.js'"
   },
   "dependencies": {
     "request": "^2.81.0",
