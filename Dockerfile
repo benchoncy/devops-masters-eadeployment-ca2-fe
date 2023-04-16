@@ -1,4 +1,4 @@
-FROM node:10.15.1
+FROM node:16
 
 # Create dir for app code inside image => working dir for app
 WORKDIR /usr/src/app
