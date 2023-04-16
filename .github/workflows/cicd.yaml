@@ -28,8 +28,8 @@ jobs:
       - name: Install dependancies
         run: npm ci
       
-      - name: Test with NPM
-        run: npm test
+      - name: Unit test
+        run: npm test-unit
     
   check:
     name: Check requirements
