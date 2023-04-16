@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup JDK
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 10.15.1
