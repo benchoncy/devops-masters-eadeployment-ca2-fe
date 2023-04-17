@@ -6,7 +6,15 @@ var fs = require('fs');
 //Loading the config fileContents
 const config = require('./config/config.json');
 const defaultConfig = config.development;
-global.gConfig = defaultConfig;
+const environmentConfig = {
+	"app_name": process.env.APP_NAME,
+	"database": process.env.DATABASE_URI,
+	"database_name": process.env.DATABASE_NAME,
+	"database_collection": process.env.DATABASE_COLLECTION,
+	"webservice": process.env.WEBSERVICE_URI, 
+	"exposedPort": process.env.PORT
+}
+global.gConfig = _.merge(defaultConfig, environmentConfig);
 
 var header = '<!doctype html><html>'+
 		     '<head>';
