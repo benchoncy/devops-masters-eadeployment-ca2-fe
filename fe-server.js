@@ -127,6 +127,7 @@ http.createServer(function (req, res) {
 					}
 					else {
 						if(!isEmptyResult(data)) {
+							console.log(data);
 							let content = JSON.parse(data);
 							if(content.error != null) {
 								handleError( content.error, res );
