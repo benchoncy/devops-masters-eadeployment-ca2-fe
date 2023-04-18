@@ -2,7 +2,7 @@
 	"development": {
         "config_id": "development",
         "app_name": "BP Category Calculator",
-        "database": "***REMOVED***",
+        "database": "",
 		"database_name": "bpcalc-mongo-db",
 		"database_collection": "bpcalc-mongo-db",
 		"webservice": "http://127.0.0.1:5000/", 
