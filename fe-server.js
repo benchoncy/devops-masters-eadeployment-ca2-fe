@@ -143,26 +143,24 @@ http.createServer(function (req, res) {
 			   }
 			 );
 			};
-			
+
+			var fileContents = fs.readFileSync('./public/default.css', {encoding: 'utf8'});
+			res.write(header);
+			res.write('<style>' + fileContents + '</style>');
+			res.write(body);
+			res.write(submitButton);
 
 			getBPCat(url).then(			
-				cat => {  // this forces a wait for 'cat' to be assigned a value				
-					res.write('<center><div id="logo">Your blood Pressure category is: ' + cat + '</div>');	
-					res.end(endBody);					
+				cat => {  // this forces a wait for 'cat' to be assigned a value		
+					res.write('<center><div id="logo">Your blood Pressure category is: ' + cat + '</div>');					
 				}
 			).catch(
 				 (error) => { handleError( error, res ); }	
 			);				
 				
 
-			myDatabaseLayer(result.email).then(			
+			myDatabaseLayer(result.email).then(		
 				hist_res => {  // this forces a wait for 'hist' to be assigned a value
-					var fileContents = fs.readFileSync('./public/default.css', {encoding: 'utf8'});
-					res.write(header);
-					res.write('<style>' + fileContents + '</style>');
-					res.write(body);
-					res.write(submitButton);
-					
 					if(!isEmptyResult(hist_res)) {
 						res.write('<div id="space"></div>');
 						res.write('<div id="logo">Your Previous Readings</div>');
@@ -178,8 +176,8 @@ http.createServer(function (req, res) {
 				}
 			).catch(
 			   (error) => { handleError( error, res ); }	
-			);				
-		});			
+			);			
+		});
     }
     else {			
 		var fileContents = fs.readFileSync('./public/default.css', {encoding: 'utf8'});
@@ -187,6 +185,5 @@ http.createServer(function (req, res) {
 		res.write('<style>' + fileContents + '</style>');
 		res.write(body);
 		res.write(submitButton);
-		res.end(endBody);
 	}
 }).listen(global.gConfig.exposedPort);
