@@ -3,7 +3,7 @@ name: CI/CD
 
 on:
   push:
-    branches: ['**']
+    branches: ['main']
     paths-ignore:
       - '**/*.md'
 
@@ -30,25 +30,13 @@ jobs:
       
       - name: Unit test
         run: npm test
-    
-  check:
-    name: Check requirements
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.8.0
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          security-checks: vuln,secret,config
 
   image:
     name: Build container image
     needs: [ build ]
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.get_tag.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -90,3 +78,36 @@ jobs:
           context: .
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
+      
+      - name: Get sha tag
+        id: get_tag
+        run: |
+          TAG=$(jq -r '."tags" | map(scan(".*:sha-[a-z0-9]+"))[0] | split(":")[1]' <<< '${{ steps.meta.outputs.json }}')
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+  
+  check:
+    name: Check requirements
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.8.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          security-checks: vuln,secret,config
+
+  deploy:
+    name: Invoke deployment
+    needs: [ image, check ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invoke workflow in another repo with inputs
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: invoke-deployment.yaml
+          repo: benchoncy/devops-masters-eadeployment-ca2-env
+          inputs: '{ "tag": "${{ needs.image.outputs.tag }}", "service_name": "bpcalc-be" }'
+          token: ${{ secrets.TOKEN_GHA }}
